@@ -2,6 +2,13 @@ answer(a).
 answer(b).
 answer(c).
 answer(d).
+count_occurrences(List, Occ) :-
+    findall(L-X, (bagof(true,member(X,List),Xs), length(Xs,L)), Occ). %answer7 10
+least_occurrence(List, E) :-
+    count_occurrences(List, Occ), keysort(Occ, Sorted), Sorted = [N-_|_], member(N-E, Sorted).
+minmax_occurrence(List, Mm) :-
+    count_occurrences(List, Occ), keysort(Occ, Sorted), Sorted = [N-_|_], reverse(Sorted, Rev), Rev = [M-_|_], Mm is M - N.
+    
 not_neighbor(X, Y) :- (X=a,Y=c;X=c,Y=a;X=b,Y=d;X=d,Y=b;X=a,Y=d;X=d,Y=a) -> true ; false. %answer8
 opposite(B1, B2) :- (B1;B2), not((B1,B2)) -> true ; false. %answer9 nxor
 answers(A1,A2,A3,A4,A5,A6,A7,A8,A9,A10) :- 
@@ -32,6 +39,11 @@ answers(A1,A2,A3,A4,A5,A6,A7,A8,A9,A10) :-
     A3=A10,A10=A8 -> A6 = c;
     A5=A9,A9=A8 -> A6 = d),
     % answer7
+    (least_occurrence([A1,A2,A3,A4,A5,A6,A7,A8,A9,A10], E),
+    (E = c -> A7 = a;
+    E = b -> A7 = b;
+    E = a -> A7 = c;
+    E = d -> A7 = d)),
     % answer8
     (not_neighbor(A7,A1) -> A8 = a;
     not_neighbor(A5,A1) -> A8 = b;
@@ -41,6 +53,11 @@ answers(A1,A2,A3,A4,A5,A6,A7,A8,A9,A10) :-
     (opposite(A1=A6,A5=A6) -> A9 = a;
     opposite(A1=A6,A5=A10) -> A9 = b;
     opposite(A1=A6,A5=A2) -> A9 = c;
-    opposite(A1=A6,A5=A9) -> A9 = d)
+    opposite(A1=A6,A5=A9) -> A9 = d),
     %answer10
+    (minmax_occurrence([A1,A2,A3,A4,A5,A6,A7,A8,A9,A10], Mm), 
+    (Mm = 3 -> A10 = a;
+    Mm = 2 -> A10 = b;
+    Mm = 4 -> A10 = c;
+    Mm = 1 -> A10 = d))
     .
